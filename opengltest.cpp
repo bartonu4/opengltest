@@ -13,6 +13,7 @@ GLFWwindow* window;
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 using namespace glm;
 
 #include "common/shader.hpp"
@@ -145,8 +146,9 @@ int main(void)
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
 		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
-
-		glm::vec3 lightPos = glm::vec3(4, 4, 4);
+		float angle = glfwGetTime() / 1000 * 360;
+		printf("angle %f\n", angle);
+		glm::vec3 lightPos = glm::vec3(10, 10, 10)*glm::rotate(glm::vec3(1), angle, glm::vec3(0, 1, 0));
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 		
