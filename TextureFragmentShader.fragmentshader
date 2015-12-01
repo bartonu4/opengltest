@@ -11,7 +11,12 @@ in vec3 LightDirection_cameraspace;
 out vec3 color;
 
 // Values that stay constant for the whole mesh.
-uniform sampler2D samplerdiff;
+uniform sampler2D samplerTopDiff;
+uniform sampler2D samplerTopSpecular;
+uniform sampler2D samplerTopNorm;
+uniform sampler2D samplerBackDiff;
+uniform sampler2D samplerBackSpecular;
+uniform sampler2D samplerBackNorm;
 uniform mat4 MV;
 uniform vec3 LightPosition_worldspace;
 
@@ -20,12 +25,20 @@ void main(){
 	// Light emission properties
 	// You probably want to put them as uniforms
 	vec3 LightColor = vec3(1,1,1);
-	float LightPower = 200.0f;
+	float LightPower = 2000.0f;
 	
 	// Material properties
-	vec3 MaterialDiffuseColor = texture( samplerdiff, UV ).rgb;
-	vec3 MaterialAmbientColor = vec3(0.1,0.1,0.1) * MaterialDiffuseColor;
-	vec3 MaterialSpecularColor = vec3(0.3,0.3,0.3);
+	vec3 topDiff = texture( samplerTopDiff, UV ).rgb;
+	vec3 backDiff = texture(samplerBackDiff, UV).rgb;
+	vec3 topSpec = texture(samplerTopSpecular,UV).rgb;
+	vec3 backSpec = texture(samplerBackSpecular, UV).rgb;
+	
+	vec3 normTop = normalize( texture(samplerTopNorm, UV).rgb  );
+	vec3 backNorm = normalize( texture(samplerBackNorm, UV).rgb );
+	
+	vec3 MaterialDiffuseColor = vec3(0.5880, 0.5880, 0.5880);
+	vec3 MaterialAmbientColor = vec3(0.0000, 0.0000, 0.0000);
+	vec3 MaterialSpecularColor = vec3(0.0,0.0,0.0);
 
 	// Distance to the light
 	float distance = length( LightPosition_worldspace - Position_worldspace );
@@ -55,8 +68,10 @@ void main(){
 		// Ambient : simulates indirect lighting
 		MaterialAmbientColor +
 		// Diffuse : "color" of the object
-		MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
+		topDiff*MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
+		backDiff*MaterialDiffuseColor*LightColor*LightPower*cosTheta/(distance*distance)+
+		+backSpec*MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
 		// Specular : reflective highlight, like a mirror
-		MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
+		topSpec*MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
 
 }

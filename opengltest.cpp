@@ -89,16 +89,32 @@ int main(void)
 	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
 	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
 	
-	GLuint texture1 = loadTga("res/At_Droid_top_diffuse.tga");
-	GLuint texture2= loadTga("res/At_Droid_top_normal.tga");
-	
+	GLuint textureTopDiff = loadTga("res/At_Droid_top_diffuse.tga");
+	GLuint textureTopNorm= loadTga("res/At_Droid_top_normal.tga");
+	GLuint textureTopSpecular = loadTga("res/At_Droid_top_specular.tga");
+	GLuint textureBackDiff = loadTga("res/At_Droid_back_diffuse.tga");
+	GLuint textureBackNorm = loadTga("res/At_Droid_back_normal.tga");
+	GLuint textureBackSpecular = loadTga("res/At_Droid_back_specular.tga");
 	// Get a handle for our "myTextureSampler" uniform
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	glUniform1i(glGetUniformLocation(programID, "samplerdiff"), 0);
-	/*glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	glUniform1i(glGetUniformLocation(programID, "samplernorm"), 1);*/
+	glBindTexture(GL_TEXTURE_2D, textureTopDiff);
+	glUniform1i(glGetUniformLocation(programID, "samplerTopDiff"), 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textureTopNorm);
+	glUniform1i(glGetUniformLocation(programID, "samplerTopNorm"), 1);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, textureTopSpecular);
+	glUniform1i(glGetUniformLocation(programID, "samplerTopSpecular"), 2);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, textureTopDiff);
+	glUniform1i(glGetUniformLocation(programID, "samplerBackDiff"), 3);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, textureTopNorm);
+	glUniform1i(glGetUniformLocation(programID, "samplerBackNorm"), 4);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, textureTopSpecular);
+	glUniform1i(glGetUniformLocation(programID, "samplertTopSpecular"), 5);
+
 
 	// Read our .obj file
 	std::vector<glm::vec3> vertices;
@@ -147,8 +163,8 @@ int main(void)
 		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
 		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
 		float angle = glfwGetTime() / 1000 * 360;
-		printf("angle %f\n", angle);
-		glm::vec3 lightPos = glm::vec3(10, 10, 10)*glm::rotate(glm::vec3(1), angle, glm::vec3(0, 1, 0));
+		//printf("angle %f\n", angle);
+		glm::vec3 lightPos = glm::vec3(30, 30, 30)*glm::rotate(glm::vec3(1), angle, glm::vec3(0, 1, 0));
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 		
