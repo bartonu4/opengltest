@@ -91,5 +91,6 @@
     <None Include="packages.config" />
     <None Include="TextureFragmentShader.fragmentshader" />
     <None Include="TransformVertexShader.vertexshader" />
+    <None Include="lambo.fragmentshader" />
   </ItemGroup>
 </Project>

@@ -21,6 +21,26 @@ using namespace glm;
 #include "common/controls.hpp"
 #include "common/objloader.hpp"
 #include "soil/SOIL.h"
+GLuint programID;
+void loadDroid()
+{
+	
+}
+void loadLambo()
+{
+	GLuint nod = loadTga("res/nodamage1024.tga");
+	GLuint light = loadTga("res/lights1024.tga");
+	GLuint interior = loadTga("res/interior1024.tga");
+		glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, nod);
+	glUniform1i(glGetUniformLocation(programID, "samplerNodamage"), 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, light);
+	glUniform1i(glGetUniformLocation(programID, "samplerLight"), 1);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, interior);
+	glUniform1i(glGetUniformLocation(programID, "samplerInterior"), 2);
+}
 int main(void)
 {
 	// Initialise GLFW
@@ -63,7 +83,7 @@ int main(void)
 
 	// Set the mouse at the center of the screen
 	glfwPollEvents();
-	glfwSetCursorPos(window, 1024 / 2, 768 / 2);
+	//glfwSetCursorPos(window, 1024 / 2, 768 / 2);
 
 	// Dark blue background
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
@@ -75,22 +95,23 @@ int main(void)
 
 	// Cull triangles which normal is not towards the camera
 	glEnable(GL_CULL_FACE);
-
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("TransformVertexShader.vertexshader", "TextureFragmentShader.fragmentshader");
+	 programID = LoadShaders("TransformVertexShader.vertexshader", "TextureFragmentShader.fragmentshader");
 
 	// Get a handle for our "MVP" uniform
 	
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
 	GLuint ViewMatrixID = glGetUniformLocation(programID, "V");
 	GLuint ModelMatrixID = glGetUniformLocation(programID, "M");
-	
+	GLuint rotationId = glGetUniformLocation(programID, "rotate");
+
 	GLuint textureTopDiff = loadTga("res/At_Droid_top_diffuse.tga");
-	GLuint textureTopNorm= loadTga("res/At_Droid_top_normal.tga");
+	GLuint textureTopNorm = loadTga("res/At_Droid_top_normal.tga");
 	GLuint textureTopSpecular = loadTga("res/At_Droid_top_specular.tga");
 	GLuint textureBackDiff = loadTga("res/At_Droid_back_diffuse.tga");
 	GLuint textureBackNorm = loadTga("res/At_Droid_back_normal.tga");
@@ -114,14 +135,17 @@ int main(void)
 	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, textureTopSpecular);
 	glUniform1i(glGetUniformLocation(programID, "samplertTopSpecular"), 5);
+	
 
 
 	// Read our .obj file
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals; // Won't be used at the moment.
-	bool res = loadOBJ("res/droid.obj", vertices, uvs, normals);
 
+	bool res = loadOBJ("res/droid.obj", vertices, uvs, normals);
+	
+	
 	// Load it into a VBO
 
 	GLuint vertexbuffer;
@@ -149,22 +173,22 @@ int main(void)
 
 		// Use our shader
 		glUseProgram(programID);
-
+		float angle = glfwGetTime() / 1000 * 360;
 		// Compute the MVP matrix from keyboard and mouse input
 		computeMatricesFromInputs();
 		glm::mat4 ProjectionMatrix = getProjectionMatrix();
 		glm::mat4 ViewMatrix = getViewMatrix();
 		glm::mat4 ModelMatrix = glm::mat4(1.0);
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-
+		glm::mat4 rotationMat = glm::rotate(glm::mat4(1), angle, glm::vec3(0, 1, 0));
 		// Send our transformation to the currently bound shader, 
 		// in the "MVP" uniform
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
 		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
-		float angle = glfwGetTime() / 1000 * 360;
-		//printf("angle %f\n", angle);
-		glm::vec3 lightPos = glm::vec3(30, 30, 30)*glm::rotate(glm::vec3(1), angle, glm::vec3(0, 1, 0));
+		glUniformMatrix4fv(rotationId, 1, GL_FALSE, &rotationMat[0][0]);
+
+		glm::vec3 lightPos = glm::vec3(30, 30, 30)/*glm::rotate(glm::vec3(1), angle, glm::vec3(0, 1, 0))*/;
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 		

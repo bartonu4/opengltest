@@ -38,7 +38,7 @@ void main(){
 	
 	vec3 MaterialDiffuseColor = vec3(0.5880, 0.5880, 0.5880);
 	vec3 MaterialAmbientColor = vec3(0.0000, 0.0000, 0.0000);
-	vec3 MaterialSpecularColor = vec3(0.0,0.0,0.0);
+	vec3 MaterialSpecularColor = vec3(0.6,0.4,0.5);
 
 	// Distance to the light
 	float distance = length( LightPosition_worldspace - Position_worldspace );
@@ -64,14 +64,15 @@ void main(){
 	//  - Looking elsewhere -> < 1
 	float cosAlpha = clamp( dot( E,R ), 0,1 );
 	
-	color = 
+	 
 		// Ambient : simulates indirect lighting
-		MaterialAmbientColor +
+		
 		// Diffuse : "color" of the object
-		topDiff*MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
-		backDiff*MaterialDiffuseColor*LightColor*LightPower*cosTheta/(distance*distance)+
-		+backSpec*MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
-		// Specular : reflective highlight, like a mirror
-		topSpec*MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
-
+		
+			vec3 diff = clamp(backDiff+topDiff,0.0,1.0);
+			
+		vec3 scattered = MaterialAmbientColor  + diff*MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance);
+		vec3 reflected = backSpec*MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance)+
+			topSpec*MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
+			color = min(scattered + reflected,vec3(1.0));
 }
