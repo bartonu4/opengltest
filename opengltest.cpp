@@ -86,7 +86,7 @@ int main(void)
 	//glfwSetCursorPos(window, 1024 / 2, 768 / 2);
 
 	// Dark blue background
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
@@ -188,7 +188,7 @@ int main(void)
 		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
 		glUniformMatrix4fv(rotationId, 1, GL_FALSE, &rotationMat[0][0]);
 
-		glm::vec3 lightPos = glm::vec3(30, 30, 30)/*glm::rotate(glm::vec3(1), angle, glm::vec3(0, 1, 0))*/;
+		glm::vec3 lightPos = glm::vec3(30, 30, 30)*glm::rotate(glm::vec3(1), angle*3, glm::vec3(0, 1, 0));
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 		

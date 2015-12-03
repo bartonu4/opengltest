@@ -37,7 +37,7 @@ void main(){
 	vec3 backNorm = normalize( texture(samplerBackNorm, UV).rgb );
 	
 	vec3 MaterialDiffuseColor = vec3(0.5880, 0.5880, 0.5880);
-	vec3 MaterialAmbientColor = vec3(0.0000, 0.0000, 0.0000);
+	vec3 MaterialAmbientColor = vec3(0.0000, 0.0000, 0.1000);
 	vec3 MaterialSpecularColor = vec3(0.6,0.4,0.5);
 
 	// Distance to the light
