@@ -22,25 +22,7 @@ using namespace glm;
 #include "common/objloader.hpp"
 #include "soil/SOIL.h"
 GLuint programID;
-void loadDroid()
-{
-	
-}
-void loadLambo()
-{
-	GLuint nod = loadTga("res/nodamage1024.tga");
-	GLuint light = loadTga("res/lights1024.tga");
-	GLuint interior = loadTga("res/interior1024.tga");
-		glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, nod);
-	glUniform1i(glGetUniformLocation(programID, "samplerNodamage"), 0);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, light);
-	glUniform1i(glGetUniformLocation(programID, "samplerLight"), 1);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, interior);
-	glUniform1i(glGetUniformLocation(programID, "samplerInterior"), 2);
-}
+
 int main(void)
 {
 	// Initialise GLFW
@@ -145,7 +127,7 @@ int main(void)
 
 	bool res = loadOBJ("res/droid.obj", vertices, uvs, normals);
 	
-	
+	printf( "vert %f %f %f\n vec size = %d" , vertices[0].x,vertices[0].y,vertices[0].z,vertices.size());
 	// Load it into a VBO
 
 	GLuint vertexbuffer;
